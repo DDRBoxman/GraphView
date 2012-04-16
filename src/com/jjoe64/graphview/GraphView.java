@@ -2,6 +2,7 @@ package com.jjoe64.graphview;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
@@ -18,7 +19,7 @@ import com.jjoe64.graphview.compatible.ScaleGestureDetector;
 
 /**
  * GraphView is a Android View for creating zoomable and scrollable graphs.
- * This is the abstract base class for all graphs. Extend this class and implement {@link #drawSeries(Canvas, GraphViewData[], float, float, float, double, double, double, double, float)} to display a custom graph.
+ * This is the abstract base class for all graphs. Extend this class and implement {@link #drawSeries(Canvas, GraphViewSeries, float, float, float, double, double, double, double, float)} to display a custom graph.
  * Use {@link LineGraphView} for creating a line chart.
  *
  * @author jjoe64 - jonas gehring - http://www.jjoe64.com
@@ -109,8 +110,8 @@ abstract public class GraphView extends LinearLayout {
 				paint.setStrokeWidth(3);
 
 				for (int i=0; i<graphSeries.size(); i++) {
-					paint.setColor(graphSeries.get(i).color);
-					drawSeries(canvas, _values(i), graphwidth, graphheight, border, minX, minY, diffX, diffY, horstart);
+					paint.setColor(graphSeries.get(i).getColor());
+					drawSeries(canvas, graphSeries.get(i), graphwidth, graphheight, border, minX, minY, diffX, diffY, horstart);
 				}
 
 				if (showLegend) drawLegend(canvas, height, width);
@@ -172,42 +173,6 @@ abstract public class GraphView extends LinearLayout {
 				}
 			}
 			return handled;
-		}
-	}
-
-	/**
-	 * one data set for a graph series
-	 */
-	static public class GraphViewData {
-		public final double valueX;
-		public final double valueY;
-		public GraphViewData(double valueX, double valueY) {
-			super();
-			this.valueX = valueX;
-			this.valueY = valueY;
-		}
-	}
-
-	/**
-	 * a graph series
-	 */
-	static public class GraphViewSeries {
-		final String description;
-		final int color;
-		final GraphViewData[] values;
-		public GraphViewSeries(GraphViewData[] values) {
-			description = null;
-			color = 0xff0077cc; // blue version
-			this.values = values;
-		}
-		public GraphViewSeries(String description, Integer color, GraphViewData[] values) {
-			super();
-			this.description = description;
-			if (color == null) {
-				color = 0xff0077cc; // blue version
-			}
-			this.color = color;
-			this.values = values;
 		}
 	}
 
@@ -292,8 +257,8 @@ abstract public class GraphView extends LinearLayout {
 		addView(new GraphViewContentView(context), new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, 1));
 	}
 
-	private GraphViewData[] _values(int idxSeries) {
-		GraphViewData[] values = graphSeries.get(idxSeries).values;
+	/*private GraphViewData[] _values(int idxSeries) {
+		GraphViewSeries series = graphSeries.get(idxSeries);
 		if (viewportStart == 0 && viewportSize == 0) {
 			// all data
 			return values;
@@ -317,7 +282,7 @@ abstract public class GraphView extends LinearLayout {
 			}
 			return listData.toArray(new GraphViewData[listData.size()]);
 		}
-	}
+	}    */
 
 	public void addSeries(GraphViewSeries series) {
 		graphSeries.add(series);
@@ -361,17 +326,17 @@ abstract public class GraphView extends LinearLayout {
 		canvas.drawRoundRect(new RectF(lLeft, lTop, lRight, lBottom), 8, 8, paint);
 
 		for (int i=0; i<graphSeries.size(); i++) {
-			paint.setColor(graphSeries.get(i).color);
+			paint.setColor(graphSeries.get(i).getColor());
 			canvas.drawRect(new RectF(lLeft+5, lTop+5+(i*(shapeSize+5)), lLeft+5+shapeSize, lTop+((i+1)*(shapeSize+5))), paint);
-			if (graphSeries.get(i).description != null) {
+			if (graphSeries.get(i).getDescription() != null) {
 				paint.setColor(Color.WHITE);
 				paint.setTextAlign(Align.LEFT);
-				canvas.drawText(graphSeries.get(i).description, lLeft+5+shapeSize+5, lTop+shapeSize+(i*(shapeSize+5)), paint);
+				canvas.drawText(graphSeries.get(i).getDescription(), lLeft+5+shapeSize+5, lTop+shapeSize+(i*(shapeSize+5)), paint);
 			}
 		}
 	}
 
-	abstract public void drawSeries(Canvas canvas, GraphViewData[] values, float graphwidth, float graphheight, float border, double minX, double minY, double diffX, double diffY, float horstart);
+	abstract public void drawSeries(Canvas canvas, GraphViewSeries values, float graphwidth, float graphheight, float border, double minX, double minY, double diffX, double diffY, float horstart);
 
 	/**
 	 * formats the label
@@ -436,16 +401,10 @@ abstract public class GraphView extends LinearLayout {
 			return viewportStart+viewportSize;
 		} else {
 			// otherwise use the max x value
-			// values must be sorted by x, so the last value has the largest X value
 			double highest = 0;
 			if (graphSeries.size() > 0)
 			{
-				GraphViewData[] values = graphSeries.get(0).values;
-				highest = values[values.length-1].valueX;
-				for (int i=1; i<graphSeries.size(); i++) {
-					values = graphSeries.get(i).values;
-					highest = Math.max(highest, values[values.length-1].valueX);
-				}
+				highest = graphSeries.get(0).getMaxX();
 			}
 			return highest;
 		}
@@ -458,10 +417,12 @@ abstract public class GraphView extends LinearLayout {
 		} else {
 			largest = Integer.MIN_VALUE;
 			for (int i=0; i<graphSeries.size(); i++) {
-				GraphViewData[] values = _values(i);
-				for (int ii=0; ii<values.length; ii++)
-					if (values[ii].valueY > largest)
-						largest = values[ii].valueY;
+                for (Iterator<GraphViewData> dataIterator = graphSeries.get(i).getIterator(); dataIterator.hasNext();)
+                {
+                    GraphViewData data = dataIterator.next();
+                    if (data.valueY > largest)
+                        largest = data.valueY;
+                }
 			}
 		}
 		return largest;
@@ -473,16 +434,10 @@ abstract public class GraphView extends LinearLayout {
 			return viewportStart;
 		} else {
 			// otherwise use the min x value
-			// values must be sorted by x, so the first value has the smallest X value
 			double lowest = 0;
 			if (graphSeries.size() > 0)
 			{
-				GraphViewData[] values = graphSeries.get(0).values;
-				lowest = values[0].valueX;
-				for (int i=1; i<graphSeries.size(); i++) {
-					values = graphSeries.get(i).values;
-					lowest = Math.min(lowest, values[0].valueX);
-				}
+				lowest = graphSeries.get(0).getMinX();
 			}
 			return lowest;
 		}
@@ -495,10 +450,12 @@ abstract public class GraphView extends LinearLayout {
 		} else {
 			smallest = Integer.MAX_VALUE;
 			for (int i=0; i<graphSeries.size(); i++) {
-				GraphViewData[] values = _values(i);
-				for (int ii=0; ii<values.length; ii++)
-					if (values[ii].valueY < smallest)
-						smallest = values[ii].valueY;
+                for (Iterator<GraphViewData> dataIterator = graphSeries.get(i).getIterator(); dataIterator.hasNext();)
+                {
+                    GraphViewData data = dataIterator.next();
+                    if (data.valueY < smallest)
+                        smallest = data.valueY;
+                }
 			}
 		}
 		return smallest;

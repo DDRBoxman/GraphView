@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import java.util.Iterator;
+
 /**
  * Line Graph View. This draws a line chart.
  * @author jjoe64 - jonas gehring - http://www.jjoe64.com
@@ -25,25 +27,28 @@ public class LineGraphView extends GraphView {
 	}
 
 	@Override
-	public void drawSeries(Canvas canvas, GraphViewData[] values, float graphwidth, float graphheight, float border, double minX, double minY, double diffX, double diffY, float horstart) {
+	public void drawSeries(Canvas canvas, GraphViewSeries values, float graphwidth, float graphheight, float border, double minX, double minY, double diffX, double diffY, float horstart) {
 		// draw background
 		double lastEndY = 0;
 		double lastEndX = 0;
 		if (drawBackground) {
 			float startY = graphheight + border;
-			for (int i = 0; i < values.length; i++) {
-				double valY = values[i].valueY - minY;
+            boolean first = true;
+            for (Iterator<GraphViewData> dataIterator = values.getIterator(); dataIterator.hasNext();)
+            {
+                GraphViewData data = dataIterator.next();
+				double valY = data.valueY - minY;
 				double ratY = valY / diffY;
 				double y = graphheight * ratY;
 
-				double valX = values[i].valueX - minX;
+				double valX = data.valueX - minX;
 				double ratX = valX / diffX;
 				double x = graphwidth * ratX;
 
 				float endX = (float) x + (horstart + 1);
 				float endY = (float) (border - y) + graphheight +2;
 
-				if (i > 0) {
+				if (!first) {
 					// fill space between last and current point
 					int numSpace = (int) ((endX - lastEndX) / 3f) +1;
 					for (int xi=0; xi<numSpace; xi++) {
@@ -59,6 +64,9 @@ public class LineGraphView extends GraphView {
 						}
 					}
 				}
+                else {
+                    first = false;
+                }
 
 				lastEndY = endY;
 				lastEndX = endX;
@@ -68,16 +76,19 @@ public class LineGraphView extends GraphView {
 		// draw data
 		lastEndY = 0;
 		lastEndX = 0;
-		for (int i = 0; i < values.length; i++) {
-			double valY = values[i].valueY - minY;
+        boolean first = true;
+        for (Iterator<GraphViewData> dataIterator = values.getIterator(); dataIterator.hasNext();)
+        {
+            GraphViewData data = dataIterator.next();
+			double valY = data.valueY - minY;
 			double ratY = valY / diffY;
 			double y = graphheight * ratY;
 
-			double valX = values[i].valueX - minX;
+			double valX = data.valueX - minX;
 			double ratX = valX / diffX;
 			double x = graphwidth * ratX;
 
-			if (i > 0) {
+			if (!first) {
 				float startX = (float) lastEndX + (horstart + 1);
 				float startY = (float) (border - lastEndY) + graphheight;
 				float endX = (float) x + (horstart + 1);
@@ -85,6 +96,9 @@ public class LineGraphView extends GraphView {
 
 				canvas.drawLine(startX, startY, endX, endY, paint);
 			}
+            else {
+                first = false;
+            }
 			lastEndY = y;
 			lastEndX = x;
 		}

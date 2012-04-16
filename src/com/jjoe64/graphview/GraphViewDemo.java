@@ -3,9 +3,6 @@ package com.jjoe64.graphview;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.jjoe64.graphview.GraphView.GraphViewData;
-import com.jjoe64.graphview.GraphView.GraphViewSeries;
-
 /**
  * GraphViewDemo creates some dummy data to demonstrate the GraphView component.
  *
@@ -26,7 +23,7 @@ public class GraphViewDemo extends Activity {
 				this
 				, "GraphViewDemo"
 		);
-		graphView.addSeries(new GraphViewSeries(new GraphViewData[] {
+		graphView.addSeries(new BasicGraphViewSeries(new GraphViewData[] {
 				new GraphViewData(1, 2.0d)
 				, new GraphViewData(2, 1.5d)
 				, new GraphViewData(2.5, 3.0d)
