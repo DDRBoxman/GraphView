@@ -34,15 +34,15 @@ public abstract class GraphViewSeries {
         {
             GraphViewData data = dataIterator.next();
             if (first) {
-                minX = data.valueX;
-                minY = data.valueY;
+                minX = data.getX();
+                minY = data.getY();
                 first = false;
             }
 
-            minX = Math.min(data.valueX, minX);
-            minY = Math.min(data.valueY, minY);
-            maxX = Math.max(data.valueX, maxX);
-            maxY = Math.max(data.valueY, maxY);
+            minX = Math.min(data.getX(), minX);
+            minY = Math.min(data.getY(), minY);
+            maxX = Math.max(data.getX(), maxX);
+            maxY = Math.max(data.getY(), maxY);
         }
     }
 

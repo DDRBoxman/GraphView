@@ -24,12 +24,12 @@ public class GraphViewDemo extends Activity {
 				, "GraphViewDemo"
 		);
 		graphView.addSeries(new BasicGraphViewSeries(new GraphViewData[] {
-				new GraphViewData(1, 2.0d)
-				, new GraphViewData(2, 1.5d)
-				, new GraphViewData(2.5, 3.0d)
-				, new GraphViewData(3, 2.5d)
-				, new GraphViewData(4, 1.0d)
-				, new GraphViewData(5, 3.0d)
+				new BasicGraphViewData(1, 2.0d)
+				, new BasicGraphViewData(2, 1.5d)
+				, new BasicGraphViewData(2.5, 3.0d)
+				, new BasicGraphViewData(3, 2.5d)
+				, new BasicGraphViewData(4, 1.0d)
+				, new BasicGraphViewData(5, 3.0d)
 		}));
 		setContentView(graphView);
 	}

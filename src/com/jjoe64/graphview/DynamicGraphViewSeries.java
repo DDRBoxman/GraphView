@@ -7,38 +7,38 @@ public class DynamicGraphViewSeries extends GraphViewSeries {
 
     private final LinkedList<GraphViewData> values;
 
-    DynamicGraphViewSeries() {
+    public DynamicGraphViewSeries() {
         super();
 
         values = new LinkedList<GraphViewData>();
     }
 
-    DynamicGraphViewSeries(LinkedList<GraphViewData> values) {
+    public DynamicGraphViewSeries(LinkedList<GraphViewData> values) {
         super();
 
         this.values = values;
         findOutliers();
     }
 
-    DynamicGraphViewSeries(String description) {
+    public DynamicGraphViewSeries(String description) {
         super(description);
 
         values = new LinkedList<GraphViewData>();
     }
 
-    DynamicGraphViewSeries(String description, LinkedList<GraphViewData> values) {
+    public DynamicGraphViewSeries(String description, LinkedList<GraphViewData> values) {
         super(description);
         this.values = values;
         findOutliers();
     }
 
-    DynamicGraphViewSeries(String description, int color) {
+    public DynamicGraphViewSeries(String description, int color) {
         super(description, color);
 
         values = new LinkedList<GraphViewData>();
     }
 
-    DynamicGraphViewSeries(String description, int color, LinkedList<GraphViewData> values) {
+    public DynamicGraphViewSeries(String description, int color, LinkedList<GraphViewData> values) {
         super(description, color);
         this.values = values;
         findOutliers();

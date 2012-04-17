@@ -37,11 +37,11 @@ public class LineGraphView extends GraphView {
             for (Iterator<GraphViewData> dataIterator = values.getIterator(); dataIterator.hasNext();)
             {
                 GraphViewData data = dataIterator.next();
-				double valY = data.valueY - minY;
+				double valY = data.getY() - minY;
 				double ratY = valY / diffY;
 				double y = graphheight * ratY;
 
-				double valX = data.valueX - minX;
+				double valX = data.getY() - minX;
 				double ratX = valX / diffX;
 				double x = graphwidth * ratX;
 
@@ -80,11 +80,11 @@ public class LineGraphView extends GraphView {
         for (Iterator<GraphViewData> dataIterator = values.getIterator(); dataIterator.hasNext();)
         {
             GraphViewData data = dataIterator.next();
-			double valY = data.valueY - minY;
+			double valY = data.getY() - minY;
 			double ratY = valY / diffY;
 			double y = graphheight * ratY;
 
-			double valX = data.valueX - minX;
+			double valX = data.getY() - minX;
 			double ratX = valX / diffX;
 			double x = graphwidth * ratX;
 

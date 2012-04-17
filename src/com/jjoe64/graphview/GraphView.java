@@ -405,6 +405,8 @@ abstract public class GraphView extends LinearLayout {
 			if (graphSeries.size() > 0)
 			{
 				highest = graphSeries.get(0).getMaxX();
+                if (graphSeries.get(0).getSize() > highest)
+                    highest = graphSeries.get(0).getSize();
 			}
 			return highest;
 		}
@@ -420,9 +422,10 @@ abstract public class GraphView extends LinearLayout {
                 for (Iterator<GraphViewData> dataIterator = graphSeries.get(i).getIterator(); dataIterator.hasNext();)
                 {
                     GraphViewData data = dataIterator.next();
-                    if (data.valueY > largest)
-                        largest = data.valueY;
+                    if (data.getY() > largest)
+                        largest = data.getY();
                 }
+
 			}
 		}
 		return largest;
@@ -453,8 +456,8 @@ abstract public class GraphView extends LinearLayout {
                 for (Iterator<GraphViewData> dataIterator = graphSeries.get(i).getIterator(); dataIterator.hasNext();)
                 {
                     GraphViewData data = dataIterator.next();
-                    if (data.valueY < smallest)
-                        smallest = data.valueY;
+                    if (data.getY() < smallest)
+                        smallest = data.getY();
                 }
 			}
 		}

@@ -26,7 +26,7 @@ public class BarGraphView extends GraphView {
         for (Iterator<GraphViewData> dataIterator = values.getIterator(); dataIterator.hasNext();)
         {
             GraphViewData data = dataIterator.next();
-			float valY = (float) (data.valueY - minY);
+			float valY = (float) (data.getY() - minY);
 			float ratY = (float) (valY / diffY);
 			float y = graphheight * ratY;
 			canvas.drawRect((pos * colwidth) + horstart, (border - y) + graphheight, ((pos * colwidth) + horstart) + (colwidth - 1), graphheight + border - 1, paint);
