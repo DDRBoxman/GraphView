@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.RectF;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -34,7 +36,14 @@ abstract public class GraphView extends LinearLayout {
 		static final float HORIZONTAL_LABEL_HEIGHT = 80;
 	}
 
-	private class GraphViewContentView extends View {
+    ArrayList<GraphInteractionListener> mGraphInteractionListeners = new ArrayList<GraphInteractionListener>();
+
+    public interface GraphInteractionListener {
+        public abstract void onGraphStartTouch();
+        public abstract void onGraphStopTouch();
+    }
+
+	class GraphViewContentView extends View {
 		private float lastTouchEventX;
 		private float graphwidth;
 
@@ -157,10 +166,20 @@ abstract public class GraphView extends LinearLayout {
 			if (!handled) {
 				// if not scaled, scroll
 				if ((event.getAction() & MotionEvent.ACTION_DOWN) == MotionEvent.ACTION_DOWN) {
+
+                    for (GraphInteractionListener listener : mGraphInteractionListeners) {
+                        listener.onGraphStartTouch();
+                    }
+
 					handled = true;
 				}
 				if ((event.getAction() & MotionEvent.ACTION_UP) == MotionEvent.ACTION_UP) {
 					lastTouchEventX = 0;
+
+                    for (GraphInteractionListener listener : mGraphInteractionListeners) {
+                        listener.onGraphStopTouch();
+                    }
+
 					handled = true;
 				}
 				if ((event.getAction() & MotionEvent.ACTION_MOVE) == MotionEvent.ACTION_MOVE) {
@@ -318,6 +337,26 @@ abstract public class GraphView extends LinearLayout {
 			return listData.toArray(new GraphViewData[listData.size()]);
 		}
 	}
+
+    public void graphDataChanged() {
+        horlabels = null;
+        verlabels = null;
+        viewVerLabels.invalidate();
+        for (int i=0; i<this.getChildCount(); i++) {
+            View view = getChildAt(i);
+            if (view instanceof GraphViewContentView) {
+                view.invalidate();
+            }
+        }
+    }
+
+    public void addGraphInteractionListener(GraphInteractionListener listener) {
+        mGraphInteractionListeners.add(listener);
+    }
+
+    public void removeGraphInteractionListener(GraphInteractionListener listener) {
+        mGraphInteractionListeners.remove(listener);
+    }
 
 	public void addSeries(GraphViewSeries series) {
 		graphSeries.add(series);
