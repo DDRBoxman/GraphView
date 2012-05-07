@@ -371,6 +371,10 @@ abstract public class GraphView extends LinearLayout {
 		
 		graphSeries.remove(index);
 	}
+
+    public void removeAllSeries() {
+        graphSeries.clear();
+    }
 	
 	public void removeSeries(GraphViewSeries series)
 	{
