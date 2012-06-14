@@ -633,6 +633,7 @@ abstract public class GraphView extends LinearLayout {
 					verlabels = null;
 					horlabels = null;
 					numberformatter = null;
+                    graphDataChanged();
 					invalidate();
 					viewVerLabels.invalidate();
 					return true;
