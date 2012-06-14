@@ -43,7 +43,7 @@ abstract public class GraphView extends LinearLayout {
         public abstract void onGraphStopTouch();
     }
 
-	class GraphViewContentView extends View {
+	public class GraphViewContentView extends View {
 		private float lastTouchEventX;
 		private float graphwidth;
 
@@ -190,7 +190,7 @@ abstract public class GraphView extends LinearLayout {
 					handled = true;
 				}
 			}
-			return handled;
+			return true;
 		}
 	}
 
@@ -288,6 +288,7 @@ abstract public class GraphView extends LinearLayout {
 	private boolean manualYAxis;
 	private double manualMaxYValue;
 	private double manualMinYValue;
+    public GraphViewContentView mGraphContentView;
 
 	/**
 	 *
@@ -308,7 +309,8 @@ abstract public class GraphView extends LinearLayout {
 
 		viewVerLabels = new VerLabelsView(context);
 		//addView(viewVerLabels);
-		addView(new GraphViewContentView(context), new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, 1));
+        mGraphContentView = new GraphViewContentView(context);
+		addView(mGraphContentView, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, 1));
 	}
 
 	private GraphViewData[] _values(int idxSeries) {
