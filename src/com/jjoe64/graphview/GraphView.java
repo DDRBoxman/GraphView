@@ -424,6 +424,7 @@ abstract public class GraphView extends LinearLayout {
 	 * @return value to display
 	 */
 	protected String formatLabel(double value, boolean isValueX) {
+        value = (int) value / 1000;
 		if (numberformatter == null) {
 			numberformatter = NumberFormat.getNumberInstance();
 			double highestvalue = getMaxY();
